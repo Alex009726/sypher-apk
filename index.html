@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#09090b">
   <meta name="description" content="Sypher is a mobile mining and rewards app. Start a session, complete community tasks, and invite friends.">
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
   <title>Sypher — Mine together</title>
   <style>
     :root {
@@ -26,12 +27,16 @@
     header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 1rem;
-      min-height: 5rem;
+      min-height: 8rem;
+      flex-direction: column;
+      padding: 1rem 0;
       border-bottom: 1px solid #27272a;
     }
-    .brand { color: #67e8f9; font-size: 1.15rem; font-weight: 800; letter-spacing: .08em; }
+    .brand { display: block; width: min(13rem, 72vw); margin: 0 auto; }
+    .brand img { display: block; width: 100%; height: auto; }
+    header nav { justify-content: center; }
     nav { display: flex; flex-wrap: wrap; gap: .75rem 1.25rem; }
     nav a { color: #a1a1aa; font-size: .9rem; text-decoration: none; }
     nav a:hover, footer a:hover { color: #67e8f9; }
@@ -53,9 +58,12 @@
       background: #22d3ee;
       color: #082f36;
       font-weight: 800;
+      font-family: inherit;
+      font-size: 1rem;
       text-decoration: none;
       box-shadow: 0 0 2rem #22d3ee33;
     }
+    .button:disabled { cursor: not-allowed; opacity: .8; }
     .button.secondary { background: #18181b; color: #e4e4e7; border-color: #3f3f46; box-shadow: none; }
     .note { margin-top: 1rem; color: #a1a1aa; font-size: .85rem; line-height: 1.6; }
     .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: clamp(4rem, 10vw, 7rem); }
@@ -66,7 +74,6 @@
     footer div { display: flex; gap: 1.25rem; }
     footer a { color: #a1a1aa; text-decoration: none; }
     @media (max-width: 640px) {
-      header { align-items: flex-start; flex-direction: column; justify-content: center; padding: 1rem 0; }
       nav { gap: .75rem 1rem; }
       .features { grid-template-columns: 1fr; }
       footer { flex-direction: column; }
@@ -76,7 +83,7 @@
 <body>
   <div class="wrap">
     <header>
-      <a class="brand" href="./index.html" aria-label="Sypher home">SYPHER</a>
+      <a class="brand" href="./index.html" aria-label="Sypher home"><img src="./assets/sypher-logo.jpg" width="600" height="400" alt="Sypher"></a>
       <nav aria-label="Main navigation">
         <a href="./privacy.html">Privacy</a>
         <a href="./terms.html">Terms</a>
@@ -89,10 +96,10 @@
         <h1>Build rewards.<br><span class="accent">Grow together.</span></h1>
         <p class="intro">Sypher brings mining sessions, community tasks, streaks, and referrals together in one app. Start a session, follow your progress, and invite friends to join the community.</p>
         <div class="actions">
-          <a class="button" href="https://github.com/Alex009726/sypher-apk/releases">Download Sypher</a>
+          <button class="button" id="download-button" type="button" disabled>Coming soon</button>
           <a class="button secondary" href="./privacy.html">Read our Privacy Policy</a>
         </div>
-        <p class="note">Android downloads are shared through the public Releases page. Only install APKs published there by Sypher.</p>
+        <p class="note" id="download-note">The first Android release is coming soon.</p>
       </section>
       <section class="features" aria-label="Sypher features">
         <article class="card">
@@ -118,5 +125,23 @@
       </div>
     </footer>
   </div>
+  <script>
+    const apkUrl = "https://github.com/Alex009726/sypher-apk/releases/latest/download/sypher.apk";
+    fetch("https://api.github.com/repos/Alex009726/sypher-apk/releases?per_page=1")
+      .then((response) => response.ok ? response.json() : null)
+      .then((releases) => {
+        const release = Array.isArray(releases) ? releases[0] : null;
+        if (!release?.assets?.some((asset) => asset.name === "sypher.apk")) return;
+        const button = document.createElement("a");
+        button.className = "button";
+        button.id = "download-button";
+        button.href = apkUrl;
+        button.textContent = "Download Sypher";
+        document.getElementById("download-button").replaceWith(button);
+        document.getElementById("download-note").textContent =
+          "Download the latest Android build. Only install APKs published here by Sypher.";
+      })
+      .catch(() => {});
+  </script>
 </body>
 </html>
